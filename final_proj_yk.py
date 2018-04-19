@@ -190,10 +190,10 @@ def pop_groups(group_list):
 # populate_database(x)
 # pop_groups(group_list)
 
-
-end = time.time()
-final_time=float(end - start)
-print("It took", round((final_time), 2), "seconds to scrape the websites & populate the databases.")
+# # Time calculator
+# end = time.time()
+# final_time=float(end - start)
+# print("It took", round((final_time), 2), "seconds to scrape the websites & populate the databases.")
 
 
 
@@ -207,7 +207,6 @@ class Dog_Info():
       WHERE Dogs.Name='''
       statement+="'"  + name + "'"
       # print(statement)
-      return_dog=[]
       cur.execute(statement)
       table_format=PrettyTable()
       table_format.field_names=["Id", "Name", "Rank", "Height", "Weight", "Life Expectancy", "Group"]
@@ -285,8 +284,27 @@ def plot_weights():
               y=return_weights,
               marker=dict(color='rgb(158, 202, 225)')
       )]
-
-  py.plot(data, filename='Weights')
+  layout=go.Layout(
+              title="Weight Comparison of AKC Dog Groups",
+              xaxis=dict(
+                title='Dog Groups',
+                titlefont=dict(
+                  family="Courier New, monospace",
+                  size=18,
+                  color='#7f7f7f'
+                )
+              ),
+              yaxis=dict(
+              title="Weight in lbs",
+              titlefont=dict(
+                family="Courier New, monospace",
+                size=18,
+                color='#7f7f7f'
+              )
+              )
+  )
+  fig=go.Figure(data=data, layout=layout)
+  py.plot(fig, filename='Weights')
 
 def plot_heights():
   return_heights=heights()
@@ -295,17 +313,58 @@ def plot_heights():
               y=return_heights,
               marker=dict(color='rgb(158, 202, 225)')
       )]
-
-  py.plot(data, filename='Heights')
+  layout=go.Layout(
+              title="Height Comparison of AKC Dog Groups",
+              xaxis=dict(
+                title='Dog Groups',
+                titlefont=dict(
+                  family="Courier New, monospace",
+                  size=18,
+                  color='#800000'
+                )
+              ),
+              yaxis=dict(
+              title="Height in Inches",
+              titlefont=dict(
+                family="Courier New, monospace",
+                size=18,
+                color='#800000'
+              )
+              )
+  )
+  fig=go.Figure(data=data, layout=layout)
+  py.plot(fig, filename='Heights')
 
 def plot_life_expectancy():
-  return_weights=life_expectancy()
+  return_life=life_expectancy()
   data = [go.Bar(
               x=group_list,
-              y=return_weights,
+              y=return_life,
               marker=dict(color='rgb(158, 202, 225)')
       )]
-  py.plot(data, filename='Life Expectancy')
+  layout=go.Layout(
+              title="Life Expectancy Comparison of AKC Dog Groups",
+              xaxis=dict(
+                title='Dog Groups',
+                titlefont=dict(
+                  family="Courier New, monospace",
+                  size=18,
+                  color='#E633FF'
+                )
+              ),
+              yaxis=dict(
+              title="Life Measured In Years",
+              titlefont=dict(
+                family="Courier New, monospace",
+                size=18,
+                color='#E633FF'
+              )
+              )
+  )
+  fig=go.Figure(data=data, layout=layout)
+  py.plot(fig, filename='LifeExpectancy')
+
+
 
 # plot_weights()
 # plot_heights()
@@ -410,19 +469,19 @@ def interactive():
           print("Try again with another entry (Tip: Don't put a space after the dogs name)")
           response= input("Choose a dog breed...")
         pass
-      if response=="avg height":
+      elif response=="avg height":
         plot_heights()
         pass
-      if response=="avg weight":
+      elif response=="avg weight":
         plot_weights()
         pass
-      if response == "avg life":
+      elif response == "avg life":
         plot_life_expectancy()
         pass
-      if response == "groups":
+      elif response == "groups":
         master_groups_list()
         pass
-      if response == "compare":
+      elif response == "compare":
         input_1=input("Enter the name of the first dog (with a capital letter)")
         input_2=input("Enter the name of the second dog (with a capital letter)")
         try:
