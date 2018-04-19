@@ -184,11 +184,11 @@ def pop_groups(group_list):
     cur.execute(statement, insert_var)
   conn.commit()
 
-# Comment this out if you're doing the demo
-create_db()
-x=get_dogs()
-populate_database(x)
-pop_groups(group_list)
+# # Comment this out if you're doing the demo
+# create_db()
+# x=get_dogs()
+# populate_database(x)
+# pop_groups(group_list)
 
 # Time calculator
 end = time.time()
