@@ -161,9 +161,6 @@ def create_db():
     cur.execute(statement)
     conn.commit()
 
-# create_db()
-
-# x=get_dogs()
 
 def populate_database(x):
   conn=sqlite3.connect(DBNAME)
@@ -187,21 +184,39 @@ def pop_groups(group_list):
     cur.execute(statement, insert_var)
   conn.commit()
 
+# # Comment this out if you're doing the demo
+# create_db()
+# x=get_dogs()
 # populate_database(x)
 # pop_groups(group_list)
 
-# Next steps:
-    # Testing
-    # plotly
-    # virtual environment
+
+end = time.time()
+final_time=float(end - start)
+print("It took", round((final_time), 2), "seconds to scrape the websites & populate the databases.")
+
+
 
 # Class:
-class Dog_Info(self):
-  self.name=
-
+class Dog_Info():
+    def __init__(self, name):
+      self.name=name
+      conn=sqlite3.connect(DBNAME)
+      cur=conn.cursor()
+      statement='''SELECT * FROM Dogs
+      WHERE Dogs.Name='''
+      statement+="'"  + name + "'"
+      # print(statement)
+      return_dog=[]
+      cur.execute(statement)
+      table_format=PrettyTable()
+      table_format.field_names=["Id", "Name", "Rank", "Height", "Weight", "Life Expectancy", "Group"]
+      for row in cur:
+        table_format.add_row(row)
+      print(table_format)
+      return None
 
 # Writing Queries for Averages:
-
 def weights():
   conn=sqlite3.connect(DBNAME)
   cur=conn.cursor()
@@ -267,7 +282,8 @@ def plot_weights():
   return_weights=weights()
   data = [go.Bar(
               x=group_list,
-              y=return_weights
+              y=return_weights,
+              marker=dict(color='rgb(158, 202, 225)')
       )]
 
   py.plot(data, filename='Weights')
@@ -276,7 +292,8 @@ def plot_heights():
   return_heights=heights()
   data = [go.Bar(
               x=group_list,
-              y=return_heights
+              y=return_heights,
+              marker=dict(color='rgb(158, 202, 225)')
       )]
 
   py.plot(data, filename='Heights')
@@ -285,7 +302,8 @@ def plot_life_expectancy():
   return_weights=life_expectancy()
   data = [go.Bar(
               x=group_list,
-              y=return_weights
+              y=return_weights,
+              marker=dict(color='rgb(158, 202, 225)')
       )]
   py.plot(data, filename='Life Expectancy')
 
@@ -293,6 +311,128 @@ def plot_life_expectancy():
 # plot_heights()
 # plot_life_expectancy()
 
-end = time.time()
-final_time=float(end - start)
-print("It took", round((final_time), 2), "seconds to execute this project.")
+def master_groups_list():
+  conn=sqlite3.connect(DBNAME)
+  cur=conn.cursor()
+  statement='''SELECT Name, Groups
+  FROM Dogs
+  JOIN Groups ON Groups.GroupName=Dogs.Groups
+  ORDER BY Groups.Id'''
+  cur.execute(statement)
+  table_format=PrettyTable()
+  table_format.field_names=["Name", "Group"]
+  for row in cur:
+    table_format.add_row(row)
+  print(table_format)
+  return None
+
+def compare_dogs(input_1, input_2):
+  conn=sqlite3.connect(DBNAME)
+  cur=conn.cursor()
+  input_1_list=[]
+  input_2_list=[]
+  statement1='''SELECT Name, [Rank], Height, Weight, LifeExpectancy
+  FROM Dogs
+  WHERE Name='''
+  statement1= statement1 + '"' + input_1 + '"'
+  cur.execute(statement1)
+  for row in cur:
+    rank1=int(row[1])
+    input_1_list.append(rank1)
+    height1=int(row[2])
+    input_1_list.append(height1)
+    weight1=int(row[3])
+    input_1_list.append(weight1)
+    life_expectancy1=int(row[4])
+    input_1_list.append(life_expectancy1)
+
+  statement2='''SELECT Name, [Rank], Height, Weight, LifeExpectancy
+  FROM Dogs
+  WHERE Name='''
+  statement2= statement2 + '"' + input_2 + '"'
+  cur.execute(statement2)
+  for row in cur:
+    rank2=int(row[1])
+    input_2_list.append(rank2)
+    height2=int(row[2])
+    input_2_list.append(height2)
+    weight2=int(row[3])
+    input_2_list.append(weight2)
+    life_expectancy2=int(row[4])
+    input_2_list.append(life_expectancy2)
+  # print(input_1_list)
+  # print(input_2_list)
+  trace1 = go.Bar(
+    x=['Rank', 'Height', 'Weight', 'Life Expectancy'],
+    y=input_1_list,
+    name=input_1,
+    marker=dict(color='rgb(158, 202, 225)')
+    )
+  trace2 = go.Bar(
+    x=['Rank', 'Height', 'Weight', 'Life Expectancy'],
+    y=input_2_list,
+    name=input_2)
+
+  data = [trace1, trace2]
+  layout = go.Layout(
+    barmode='group')
+
+  fig = go.Figure(data=data, layout=layout)
+  py.plot(fig, filename='comparison')
+  return None
+
+
+# compare_dogs("Irish Setter", "Ibizan Hound")
+
+
+# Interactive portion
+def interactive():
+    prompt = ''' Hello, welcome to our interactive AKC dog information database.
+    Menu:
+        1. dog breed info -- Returns Information about one of our dogs in table format.
+        2. avg height -- Returns a plot of the average heights of dogs based on their group
+        3. avg weight -- Returns a plot of the average weights of our dogs based on their group
+        3. avg life -- Returns a plot of the average life expectancy of our dogs based on their group
+        4. groups -- Returns a table of the dogs in each group & a pie chart showing how many dogs are in each group
+        5. compare -- Returns a plot comparing 2 dogs at a time (Rank, Height, Weight, Life Expectancy)
+        6. exit -- exit the program'''
+    response=""
+    while response != "exit":
+      print(prompt)
+      response=input("Choose a menu option, please...")
+      if response=="dog breed info":
+        print('''Here are some example breeds, please input a breed for more info:
+              Affenpinscher, Xoloitzcuintli, Irish Setter''')
+        response=input("Choose a dog breed...")
+        try:
+          doggo_info=Dog_Info(response)
+        except:
+          print("Try again with another entry (Tip: Don't put a space after the dogs name)")
+          response= input("Choose a dog breed...")
+        pass
+      if response=="avg height":
+        plot_heights()
+        pass
+      if response=="avg weight":
+        plot_weights()
+        pass
+      if response == "avg life":
+        plot_life_expectancy()
+        pass
+      if response == "groups":
+        master_groups_list()
+        pass
+      if response == "compare":
+        input_1=input("Enter the name of the first dog (with a capital letter)")
+        input_2=input("Enter the name of the second dog (with a capital letter)")
+        try:
+          compare_dogs(input_1, input_2)
+        except:
+          print("Invalid response, try again")
+        pass
+      else:
+        pass
+
+
+if __name__ == "__main__":
+    interactive()
