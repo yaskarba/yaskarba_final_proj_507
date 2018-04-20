@@ -28,7 +28,7 @@ def make_request_using_cache(url):
   unique_ident = get_unique_key(url)
 
   if unique_ident in CACHE_DICTION:
-      # print("Getting cached data...")
+      print("Getting cached data...")
       return CACHE_DICTION[unique_ident]
 
   else:
@@ -185,15 +185,16 @@ def pop_groups(group_list):
   conn.commit()
 
 # # Comment this out if you're doing the demo
+# ***********************************UNCOMMENT BELOW *********************************
 # create_db()
 # x=get_dogs()
 # populate_database(x)
 # pop_groups(group_list)
 
 # Time calculator
-end = time.time()
-final_time=float(end - start)
-print("It took", round((final_time), 2), "seconds to scrape the websites & populate the databases.")
+# end = time.time()
+# final_time=float(end - start)
+# print("It took", round((final_time), 2), "seconds to scrape the websites & populate the databases.")
 
 
 
@@ -452,46 +453,65 @@ def interactive():
         2. avg height -- Returns a plot of the average heights of dogs based on their group
         3. avg weight -- Returns a plot of the average weights of our dogs based on their group
         3. avg life -- Returns a plot of the average life expectancy of our dogs based on their group
-        4. groups -- Returns a table of the dogs in each group & a pie chart showing how many dogs are in each group
+        4. dogs -- Returns a table of the dogs & the group they belong to
         5. compare -- Returns a plot comparing 2 dogs at a time (Rank, Height, Weight, Life Expectancy)
         6. exit -- exit the program'''
     response=""
     while response != "exit":
       print(prompt)
       response=input("Choose a menu option, please...")
-      if response=="dog breed info":
+      if "dog breed info" in response:
         print('''Here are some example breeds, please input a breed for more info:
-              Affenpinscher, Xoloitzcuintli, Irish Setter''')
+              Affenpinscher, Xoloitzcuintli, Irish Setter, Cardigan Welsh Corgi, etc.''')
         response=input("Choose a dog breed...")
         try:
+          print(''' Info here:
+
+
+          ''')
           doggo_info=Dog_Info(response)
+          print('''
+
+
+          ''')
         except:
           print("Try again with another entry (Tip: Don't put a space after the dogs name)")
           response= input("Choose a dog breed...")
         pass
-      elif response=="avg height":
+      elif "avg height" in response:
         plot_heights()
-        pass
-      elif response=="avg weight":
+        # pass
+      elif "avg weight" in response:
         plot_weights()
-        pass
-      elif response == "avg life":
+        # pass
+      elif "avg life" in response:
         plot_life_expectancy()
-        pass
-      elif response == "groups":
+        # pass
+      elif "dogs" in response:
         master_groups_list()
-        pass
-      elif response == "compare":
+        # pass
+      elif "compare" in response:
         input_1=input("Enter the name of the first dog (with a capital letter)")
         input_2=input("Enter the name of the second dog (with a capital letter)")
         try:
           compare_dogs(input_1, input_2)
         except:
-          print("Invalid response, try again")
-        pass
+          print("Invalid breed entry, try again")
+          continue
+      elif "help" in response:
+        print(prompt)
+        response=input("Please select a menu option")
       else:
         pass
+        # print("Error")
+        # print(prompt)
+        # print("Choose a menu option, please...")
+    print('''
 
 
+    The pups are sad to see you go ..... bye for now!
+
+
+    ''')
 if __name__ == "__main__":
     interactive()
